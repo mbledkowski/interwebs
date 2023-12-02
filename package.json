@@ -1,0 +1,23 @@
+{
+  "name": "interwebs",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "type": "module",
+  "dependencies": {
+    "@types/user-agents": "^1.0.4",
+    "dgraph-js": "^21.3.1",
+    "playwright": "^1.40.1",
+    "user-agents": "^1.1.40"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.1",
+    "tsx": "^4.6.1",
+    "typescript": "^5.3.2"
+  }
+}
