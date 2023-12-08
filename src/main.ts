@@ -3,7 +3,7 @@ import type { WebEngines } from "./interface";
 import { randomInt } from "crypto";
 import os from "os";
 import UserAgent from "user-agents";
-import dgraph from "dgraph-js";
+import { Database } from "./db";
 
 function validateUrl(url: string): boolean {
   const urlValidationRegex =
@@ -17,7 +17,7 @@ async function processUrl(
   browser: Browser,
   queue: Set<string>,
   loaded: Set<string>,
-  database: { title: string; url: string; urls: string[] }[],
+  db: Database,
   i: number,
   j: number
 ): Promise<void> {
@@ -26,28 +26,40 @@ async function processUrl(
   const context = await browser.newContext({ userAgent });
   const page = await context.newPage();
 
+  let finalUrl: string;
   let title: string;
-  let urls: string[];
+  let links: string[];
 
   try {
     await page.goto(url);
 
     await page.waitForLoadState("load");
 
+    finalUrl = page.url();
     title = await page.title();
 
-    const rawUrls = await page.$$eval("a", (as) => as.map((a) => a.href));
+    const rawLinks = await page.$$eval("a", (as) => as.map((a) => a.href));
 
-    urls = rawUrls.filter((url) => validateUrl(url));
+    links = rawLinks.filter((url) => validateUrl(url));
 
     loaded.add(url);
 
-    urls.forEach((url) => {
+    links.forEach((url) => {
       queue.add(url);
     });
 
-    console.log(`[${j}, ${i}]: ${url} ${title}`);
-    database.push({ title, url, urls });
+    if (url !== finalUrl) {
+      console.log(
+        `[${j}, ${i}]: Start: ${url}; Final: ${finalUrl}; Title: ${title}`
+      );
+    } else {
+      console.log(`[${j}, ${i}]: Url: ${url}; Title: ${title}`);
+    }
+
+    if (finalUrl !== url) {
+      db.addWebPage(url, "", [finalUrl], true);
+    }
+    db.addWebPage(finalUrl, title, links, false);
   } finally {
     queue.delete(url);
     await context.close();
@@ -75,10 +87,14 @@ async function main() {
     browsers.push(await playwright[webEngine].launch());
   }
 
+  const db = new Database();
+
+  await db.dropDatabase();
+
   const queue = new Set<string>(startUrls);
   const loaded = new Set<string>();
 
-  const allDataCollected: { title: string; url: string; urls: string[] }[] = [];
+  db.commit();
   for (let j = 0; j < iterations; j++) {
     const queueOfProcesses = [];
     const queueIterator = queue.values();
@@ -91,7 +107,7 @@ async function main() {
             browsers[randomInt(browsers.length)] as Browser,
             queue,
             loaded,
-            allDataCollected,
+            db,
             i,
             j
           ).catch(console.error)
@@ -103,8 +119,7 @@ async function main() {
   for (const browser of browsers) {
     await browser.close();
   }
-
-  return allDataCollected;
+  db.close();
 }
 
 main().then(console.log).catch(console.error);
