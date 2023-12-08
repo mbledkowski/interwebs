@@ -10,8 +10,9 @@
   "license": "",
   "type": "module",
   "dependencies": {
+    "@types/gremlin": "^3.6.7",
     "@types/user-agents": "^1.0.4",
-    "dgraph-js": "^21.3.1",
+    "gremlin": "^3.7.1",
     "playwright": "^1.40.1",
     "user-agents": "^1.1.40"
   },
