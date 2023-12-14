@@ -88,13 +88,14 @@ async function main() {
   }
 
   const db = new Database();
+  await db.build();
 
   await db.dropDatabase();
+  await db.createDatabase();
 
   const queue = new Set<string>(startUrls);
   const loaded = new Set<string>();
 
-  db.commit();
   for (let j = 0; j < iterations; j++) {
     const queueOfProcesses = [];
     const queueIterator = queue.values();

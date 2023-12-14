@@ -1,43 +1,32 @@
-import gremlin from "gremlin";
+import pg from "pg";
+const Client = pg.Client;
 
 export class Database {
-  connection: gremlin.driver.DriverRemoteConnection;
-  g: gremlin.process.GraphTraversalSource<gremlin.process.GraphTraversal>;
-  queue: Function[];
+  client: pg.Client;
+  graphName: string;
 
   constructor() {
-    this.connection = new gremlin.driver.DriverRemoteConnection(
-      "ws://localhost:8182/gremlin",
-      "g"
-    );
-    this.g = gremlin.process.AnonymousTraversalSource.traversal().withRemote(
-      this.connection
-    );
-    this.queue = [
-      async () => {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-      },
-    ];
+    this.client = new Client({
+      database: "postgresDB",
+      host: "localhost",
+      password: "postgres",
+      port: 5455,
+      user: "interwebs",
+    });
+    this.graphName = "interwebs";
   }
 
-  async connectToVertex(
-    mainVertex: IteratorResult<gremlin.structure.Vertex>,
-    link: string
-  ) {
-    let destinationVertex = await this.g
-      .V()
-      .has("url", link)
-      .fold()
-      .coalesce(
-        gremlin.process.statics.unfold(),
-        gremlin.process.statics.addV("webpage").property("url", link)
-      )
-      .next();
-    return await this.g
-      .V(mainVertex.value.id)
-      .addE("linksTo")
-      .to(destinationVertex.value)
-      .next();
+  async build() {
+    await this.client.connect();
+    await this.client.query(`
+      CREATE EXTENSION IF NOT EXISTS age;
+      LOAD 'age';
+      SET search_path = ag_catalog, "$user", public;
+    `);
+  }
+
+  async createDatabase() {
+    await this.client.query(`SELECT create_graph('${this.graphName}');`);
   }
 
   async addWebPage(
@@ -46,47 +35,44 @@ export class Database {
     links: string[],
     redirect: boolean
   ) {
-    this.queue.push(async () => {
-      let err = true;
-      let i = 0;
-      while (err && i < 3) {
-        try {
-          let pageVertex = await this.g
-            .addV("webpage")
-            .property("url", url)
-            .property("title", title)
-            .property("redirect", redirect)
-            .next();
+    try {
+      await this.client.query(`
+        SELECT *
+        FROM cypher('interwebs', $$
+            MERGE (page:webpage {url: "${url}"})
+            SET page.title = "${title}", page.redirect = ${redirect}
+        $$) AS (page agtype)
+    `);
 
-          // const queueOfProcesses = [];
-          for (const link of links) {
-            // queueOfProcesses.push(this.connectToVertex(pageVertex, link));
-            await this.connectToVertex(pageVertex, link);
-          }
-          // await Promise.all(queueOfProcesses);
-          err = false;
-        } catch (e) {
-          console.log(`Error adding webpage - ${i}`);
-          console.log(e);
-          i++;
-        }
+      const queueOfPromises: Promise<pg.QueryResult>[] = [];
+      for (let link of links) {
+        queueOfPromises.push(
+          this.client.query(`
+        SELECT *
+        FROM cypher('interwebs', $$
+          MATCH (page:webpage {url: "${url}"})
+          MERGE (linkedPage:webpage {url: "${link}"})
+          MERGE (page)-[:linksTo]->(linkedPage)
+          RETURN {page: page, linkedPage: linkedPage}
+        $$) AS (result agtype)
+      `)
+        );
       }
-    });
-  }
-
-  async commit() {
-    while (this.queue.length > 0) {
-      for (const process of this.queue) {
-        await process();
-      }
+      await Promise.all(queueOfPromises);
+    } catch (err) {
+      console.log(err);
     }
   }
 
   async dropDatabase() {
-    await this.g.V().drop().iterate();
+    try {
+      await this.client.query(`SELECT drop_graph('${this.graphName}', true);`);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   close() {
-    this.connection.close();
+    this.client.end();
   }
 }
