@@ -1,6 +1,6 @@
 import type pg from "pg";
 import { Client } from "pg";
-import { OGTypeParser } from "./dbResponseParser"
+import { webpageParser, linkParser } from "./dbResponseParser";
 
 export class Database {
   client: pg.Client;
@@ -32,12 +32,29 @@ export class Database {
     `);
 
     const res = dbData.rows.map((rowRaw: { v: string }) => {
-      const row = OGTypeParser(rowRaw.v);
+      const row = webpageParser(rowRaw.v);
       return {
         id: row.id,
         url: row.properties.url,
         title: row.properties.title,
         redirect: row.properties.redirect,
+      };
+    });
+
+    return res;
+  }
+
+  async getEdges() {
+    const dbData = await this.client.query(`
+      SELECT * FROM cypher('interwebs', $$ match (:webpage)-[p:linksTo]->(:webpage) RETURN (p) $$) as (V agtype)
+    `)
+
+    const res = dbData.rows.map((rowRaw: { v: string }) => {
+      const row = linkParser(rowRaw.v);
+      return {
+        id: row.id,
+        start_id: row.start_id,
+        end_id: row.end_id,
       };
     });
 

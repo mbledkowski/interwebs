@@ -1,7 +1,7 @@
 import { AGTypeParse } from "./age-driver/dist"
-import { type Node } from "../interfaces"
+import { type Node, type Edge } from "../interfaces"
 
-export function OGTypeParser(rowRaw: string) {
+export function webpageParser(rowRaw: string) {
   const rowParserRaw = AGTypeParse(rowRaw) as Map<
     string,
     Map<string, string | boolean> | string | number
@@ -18,6 +18,17 @@ export function OGTypeParser(rowRaw: string) {
       title: propertiesParserRaw.get("title") as string,
       redirect: propertiesParserRaw.get("redirect") as boolean,
     },
+  };
+  return row;
+}
+
+export function linkParser(rowRaw: string) {
+  const rowParserRaw = AGTypeParse(rowRaw) as Map<string, number | string>[];
+  const row: Edge = {
+    id: rowParserRaw[0]?.get("id") as number,
+    label: rowParserRaw[0]?.get("label") as string,
+    start_id: rowParserRaw[0]?.get("start_id") as number,
+    end_id: rowParserRaw[0]?.get("end_id") as number,
   };
   return row;
 }
