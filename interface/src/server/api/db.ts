@@ -1,5 +1,6 @@
 import type pg from "pg";
 import { Client } from "pg";
+import { OGTypeParser } from "./dbResponseParser"
 
 export class Database {
   client: pg.Client;
@@ -30,9 +31,14 @@ export class Database {
       SELECT * FROM cypher('${this.graphName}', $$ match p = (:webpage) RETURN (p) $$) as (V agtype)
     `);
 
-    const res = dbData.rows.map((rowRaw) => {
-      const row = JSON.parse(rowRaw);
-      return { id: row.id, url: row.properties.url, title: row.properties.title, redirect: row.properties.redirect };
+    const res = dbData.rows.map((rowRaw: { v: string }) => {
+      const row = OGTypeParser(rowRaw.v);
+      return {
+        id: row.id,
+        url: row.properties.url,
+        title: row.properties.title,
+        redirect: row.properties.redirect,
+      };
     });
 
     return res;

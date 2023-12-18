@@ -9,7 +9,7 @@ await db.build();
 
 export const graphRouter = createTRPCRouter({
   nodes: publicProcedure
-    .query(async () => { const nodes = await db.getNodes(); return nodes.rows; })
+    .query(async () => { const nodes = await db.getNodes(); return nodes; })
   // hello: publicProcedure
   //   .input(z.object({ text: z.string() }))
   //   .query(({ input }) => {
