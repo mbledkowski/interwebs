@@ -1,5 +1,5 @@
-import { AGTypeParse } from "./age-driver/dist"
-import { type Node, type Edge } from "../interfaces"
+import { AGTypeParse } from "./age-driver/dist";
+import { type Node, type Edge } from "../interfaces";
 
 export function webpageParser(rowRaw: string) {
   const rowParserRaw = AGTypeParse(rowRaw) as Map<
@@ -23,12 +23,12 @@ export function webpageParser(rowRaw: string) {
 }
 
 export function linkParser(rowRaw: string) {
-  const rowParserRaw = AGTypeParse(rowRaw) as Map<string, number | string>[];
+  const rowParserRaw = AGTypeParse(rowRaw) as Map<string, number | string>;
   const row: Edge = {
-    id: rowParserRaw[0]?.get("id") as number,
-    label: rowParserRaw[0]?.get("label") as string,
-    start_id: rowParserRaw[0]?.get("start_id") as number,
-    end_id: rowParserRaw[0]?.get("end_id") as number,
+    id: rowParserRaw?.get("id") as number,
+    label: rowParserRaw?.get("label") as string,
+    start_id: rowParserRaw?.get("start_id") as number,
+    end_id: rowParserRaw?.get("end_id") as number,
   };
   return row;
 }

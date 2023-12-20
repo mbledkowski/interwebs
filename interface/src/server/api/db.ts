@@ -1,6 +1,7 @@
 import type pg from "pg";
 import { Client } from "pg";
 import { webpageParser, linkParser } from "./dbResponseParser";
+import { type Node, type Edge } from "~/interfaces";
 
 export class Database {
   client: pg.Client;
@@ -26,12 +27,12 @@ export class Database {
     `);
   }
 
-  async getNodes() {
+  async getNodes(): Promise<Node[]> {
     const dbData = await this.client.query(`
       SELECT * FROM cypher('${this.graphName}', $$ match p = (:webpage) RETURN (p) $$) as (V agtype)
     `);
 
-    const res = dbData.rows.map((rowRaw: { v: string }) => {
+    const res: Node[] = dbData.rows.map((rowRaw: { v: string }) => {
       const row = webpageParser(rowRaw.v);
       return {
         id: row.id,
@@ -44,12 +45,12 @@ export class Database {
     return res;
   }
 
-  async getEdges() {
+  async getEdges(): Promise<Edge[]> {
     const dbData = await this.client.query(`
-      SELECT * FROM cypher('interwebs', $$ match (:webpage)-[p:linksTo]->(:webpage) RETURN (p) $$) as (V agtype)
-    `)
+      SELECT * FROM cypher('${this.graphName}', $$ match (:webpage)-[p:linksTo]->(:webpage) RETURN (p) $$) as (V agtype)
+    `);
 
-    const res = dbData.rows.map((rowRaw: { v: string }) => {
+    const res: Edge[] = dbData.rows.map((rowRaw: { v: string }) => {
       const row = linkParser(rowRaw.v);
       return {
         id: row.id,
