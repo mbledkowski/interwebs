@@ -1,7 +1,6 @@
 import type pg from "pg";
 import { Client } from "pg";
 import { webpageParser, linkParser } from "./dbResponseParser";
-import { type Node, type Edge } from "~/interfaces";
 
 export class Database {
   client: pg.Client;
@@ -27,12 +26,12 @@ export class Database {
     `);
   }
 
-  async getNodes(): Promise<Node[]> {
+  async getNodes() {
     const dbData = await this.client.query(`
       SELECT * FROM cypher('${this.graphName}', $$ match p = (:webpage) RETURN (p) $$) as (V agtype)
     `);
 
-    const res: Node[] = dbData.rows.map((rowRaw: { v: string }) => {
+    const res = dbData.rows.map((rowRaw: { v: string }) => {
       const row = webpageParser(rowRaw.v);
       return {
         id: row.id,
@@ -45,12 +44,12 @@ export class Database {
     return res;
   }
 
-  async getEdges(): Promise<Edge[]> {
+  async getEdges() {
     const dbData = await this.client.query(`
       SELECT * FROM cypher('${this.graphName}', $$ match (:webpage)-[p:linksTo]->(:webpage) RETURN (p) $$) as (V agtype)
     `);
 
-    const res: Edge[] = dbData.rows.map((rowRaw: { v: string }) => {
+    const res = dbData.rows.map((rowRaw: { v: string }) => {
       const row = linkParser(rowRaw.v);
       return {
         id: row.id,
