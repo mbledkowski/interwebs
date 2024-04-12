@@ -45,7 +45,9 @@ async function processUrl(
     loaded.add(url);
 
     links.forEach((url) => {
-      queue.add(url);
+      if (!loaded.has(url)) {
+        queue.add(url);
+      }
     });
 
     if (url !== finalUrl) {
