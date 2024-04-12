@@ -13,7 +13,7 @@
 \usepackage{hyperref}
 \addbibresource{bibliography.bib}
 
-\title{Wizualizacja struktury internetu przy użyciu grafów}
+\title{Wizualizacja struktury internetu z wykorzystaniem teorii grafów}
 \author{Maciej Błędkowski \\ Prof. dr hab. Bernard Kubiak \\ \\ Wydział Informatyki i Nowych Technologii \\ Uniwersytet WSB Merito w Gdańsku}
 \date{\today}
 
@@ -25,6 +25,10 @@
 
 \section{Wstęp}
 Celem pracy jest projekt i implementacja programu do wizualizacji struktury internetu, przy wykorzystaniu teorii grafów. Wizualizacja ta będzie opierać się wyłącznie na dostępnych serwerach HTTP, z pominięciem innych protokołów, aby utrzymać prostotę w tej wizualizacji. Wierzchołkami tego grafu, będą strony internetowe, a krawędziami - linki na tejże stronie.
+
+Kod projektu jest udostępniany na licencji AGPL-3.0. Praca, którą obecnie czytasz, obięta jest licencją CC-BY-ND-4.0.
+
+\textbf{Kod i praca:} \url{https://github.com/mbledkowski/interwebs}
 
 \section{Opis problemu i użyte technologie}
 Cały projekt został stworzony przy użyciu języka TypeScript. Podstawowymi narzędziami, użytymi w tym celu są:
@@ -42,9 +46,9 @@ Menadżer pakietów użyty w tym projekcie to alternatywa dla NPM (Node Package 
 \subsection{Technologie użyte w różnych miejscach}
 W celu stworzenia wizualizacji struktury internetu, potrzebne są trzy elementy:
 \begin{itemize}
-  \item Robot indeksujący
-  \item Baza danych
-  \item Aplikacja webowa
+	\item Robot indeksujący
+	\item Baza danych
+	\item Aplikacja webowa
 \end{itemize}
 
 \subsection{Robot indeksujący}
@@ -58,18 +62,18 @@ Zorganizowany i ustrukturyzowany zbiór informacji i danych, zazwyczaj przechowy
 
 Wymagania postawione przy tym projekcie to:
 \begin{itemize}
-  \item Otwarty kod źródłowy
-  \item Stosowanie reguły ACID (niepodzielność, spójność, izolacja, trwałość; ang. atomicity, consistency, isolation, durability)
-  \item Stabilność działania
-  \item Wysokiej jakości dokumentacja techniczna
-  \item Możliwość uruchomienia na własnym serwerze
+	\item Otwarty kod źródłowy
+	\item Stosowanie reguły ACID (niepodzielność, spójność, izolacja, trwałość; ang. atomicity, consistency, isolation, durability)
+	\item Stabilność działania
+	\item Wysokiej jakości dokumentacja techniczna
+	\item Możliwość uruchomienia na własnym serwerze
 \end{itemize}
 
 Najpopularniejszą grafową bazą danych jest niewątpiwie Neo4j. Spełnia ona większość z wymienionych wymagań, lecz niestety na przełomie wersji 3.4 i 3.5 (rok 2018), firma Neo4j zmieniła licencję dla dużej części kodu z Affero General Public License w wersji trzeciej, na licencję własnościową, która dla komercyjnego użytku wymaga zawarcia z wyżej wymienioną firmą kontraktu.\cite{neo4jLicenseChangeBlog} Istnieje fork neo4j, przed zmianami licencyjnymi, nazywający się OngDB, jednak dokumentacja, dla tego fork-a jest uboga.
 
 Inną bazą danych, która była rozważana do użycia przy tym projekcie to Dgraph. Na pierwszy rzut oka może wydawać się, że Dgraph spełnia nasze wymagania, lecz jest to projekt dosyć młody, a co za tym idzie, dokumentacja jest w wielu miejscach wybrakowana. Przy próbie wykorzystania tejże bazy, napotkałem na problemy, których nie rozwiązać nie była w stanie dokumentacja.
 
-Kolejna baza danych, która była rozpatrywana, to JanusGraph. Problemy napotkane w przypadku JanusGraph to stosowanie reguły ACID i stabilność działania. JanusGraph może wykorzystywać różne bazy danych pod spodem i może być skonfigurowany w różny sposób. Z tego względu przestrzeganie reguły ACID zależne jest od danej konfiguracji. W naszym przypadku pochylę się wyłącznie nad domyślną konfiguracją, dostarczoną w oficjalnym kontenerze Docker-owym. Problemem jaki został napotkany, przy użyciu danego kontenera, jest to, że przy użyciu asynchronicznego wywoływania funkcji, baza danych po pewnym czasie zaczyna wyrzucać błędy, a dane w niej do tej pory zapisane, jest ciężko odzyskać.
+Kolejna baza danych, która była rozpatrywana, to JanusGraph. Problemy napotkane w przypadku JanusGraph to stosowanie reguły ACID i stabilność działania. JanusGraph może wykorzystywać różne bazy danych pod spodem i może być skonfigurowany w różny sposób. Z tego względu przestrzeganie reguły ACID zależne jest od danej konfiguracji. W naszym przypadku pochylę się wyłącznie nad domyślną konfiguracją, dostarczoną w oficjalnym kontenerze Docker-owym. Problemem jaki został napotkany, przy użyciu danego kontenera, jest taki, że przy użyciu asynchronicznego wywoływania funkcji, baza danych po pewnym czasie zaczyna wyrzucać błędy, a dane w niej do tej pory zapisane, jest ciężko odzyskać.
 
 Bazą danych która w pełni spełniła nasze wymagania, jest Apache Age, którą opisano poniżej.
 
@@ -91,6 +95,23 @@ Biblioteka, służąca do budowania interfejsów użytkownika, bazująca na komp
 Framework React-owy, służący do budowania kompleksowych aplikacji internetowych. Pozwala na używanie komponentów React-owych, oraz własnej funkcjonalności i optymalizacji. Framework ten automatycznie konfiguruje wszystkie potrzebne narzędzia, co pozwala na szybsze prototypowanie. Najistotniejszą funkcją Next.js-a, są komponenty serwerowe, które pozwalają na wykonanie React-owych komponeentów po stronie serwera, a co za tym idzie, wysłanie do klienta już gotowego interfejsu.\cite{introNextjs} Stworzony przez Guillermo Rauch\cite{githubNextjsInit}, aktualnie rozwijany przez firmę Vercel, oraz niezależnych programistów.\cite{githubNextjsContributors}
 \subsubsection{D3}
 Biblioteka języka JavaScript, ułatwiająca proces tworzenia wizualizacji danych.\cite{homeD3} Stworzona przez Mike Bostock, współzałożyciela firmy Observable.\cite{githubD3Init}
+
+\section{Projekt}
+\subsection{Robot indeksujący}
+Robot indeksujący został napisany w języku TypeScript, gdzie do ładowania i renderowania stron wykorzystana została biblioteka Playwright.
+
+Proces crawlowania rozpoczynany jest od 5 oficjalnych witryn amerykańskich firm typu Big-Tech, 4 chińskich, oraz od strony głównej Wikipedii. Moim zamierzeniem było, aby w możliwie jak najbardziej obiektywny sposób rozpocząć indeksowanie, bez faworyzowania konkretnych części internetu. Firmy Big-Tech, niewątpliwie są odpowiedzialne za większość dostępnych treści internetowych; a Wikipedia jest jednym z najpopularniejszych źródeł wiedzy w internecie, do tego nie będąc tworem nastawionym na zysk.
+
+Pojęte zostały kroki w celu mimiki ruchu z różnych urządzeń. Wykorzystane do tego celu zostały zarówno silnik Chromium, jak i Firefox. Silnik WebKit (występujący w przeglądarce Apple Safari), nie mógł zostać wykorzystany, ze względu na fakt, iż framework Playwright ma problemy z zainicjowaniem go na dystrybucjach innych niż Ubuntu.\cite{playwrightWebkitIssue} Najistotniejszym w mimice losowego ruchu, jest manipulacja zmienną "User-Agent", która podawana jest przy każdym zapytaniu, wysyłanym do serwera webowego. W tym celu zaimplementowana została biblioteka User-Agents autorstwa Evan Sangaline, która pozwala na wylosowanie zmiennej User-Agent, która będzie odpowiadała klientowi występującemu w świecie rzeczywistym. Zarówno silnik, jak i User-Agent wybierane są losowo dla każdego adresu URL.
+
+Adresy URL przechowywane są w tablicy, nazwanej kolejką. Ilość adresów ładowanych w jednym momencie, dla kolejki o długości \(n\); to \(m\), gdzie \(m\) odpowiada ilości wątków procesora, jeżeli \(m < n\). Takie podejście ma na celu wykorzystnie w pełni potencjału maszyny.
+
+Program, dla każdej załadowanej witryny, sprawdza wszystkie Anchor elementy (tag <a>) i kopiuje ich atrybut href. Po sprawdzeniu, czy dany adres jest poprawny, dodawany jest on do kolejki.
+
+Każdy adres, po załadowaniu, dodawany jest do bazy danych, gdzie obecna witryna dodawana jest jako węzeł, bądź jej dane są aktualizowane. Krawędzie tegoż węzła o wartości "linksTo" wskazują węzły stron, które dana witryna linkuje. W przypadku w którym węzeł reprezentuje adres, który jest jedynie przekierowaniem, jego wartość "redirect", zmieniana jest na true.
+
+
+
 
 \printbibliography
 
