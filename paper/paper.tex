@@ -6,27 +6,95 @@
 
 \usepackage[
   backend=biber,
-  style=alphabetic,
+  style=numeric,
   sorting=ynt,
   block=ragged
 ]{biblatex}
 \usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listings}
 \addbibresource{bibliography.bib}
+\lstset{basicstyle=\small\fontfamily{qcr}\selectfont, numbers=left, numberstyle=\tiny, frame=single, breaklines=true}
 
 \title{Wizualizacja struktury internetu z wykorzystaniem teorii grafów}
-\author{Maciej Błędkowski \\ Prof. dr hab. Bernard Kubiak \\ \\ Wydział Informatyki i Nowych Technologii \\ Uniwersytet WSB Merito w Gdańsku}
+\author{Maciej Błędkowski \\ Nr albumu 63112 \\ \\ Prof. dr hab. Bernard Kubiak \\ \\ \\ Wydział Informatyki i Nowych Technologii \\ Uniwersytet WSB Merito w Gdańsku}
 \date{\today}
 
 \begin{document}
+\AddToHook{cmd/section/before}{\clearpage}
 
 \maketitle
 
 \tableofcontents
 
 \section{Wstęp}
-Celem pracy jest projekt i implementacja programu do wizualizacji struktury internetu, przy wykorzystaniu teorii grafów. Wizualizacja ta będzie opierać się wyłącznie na dostępnych serwerach HTTP, z pominięciem innych protokołów, aby utrzymać prostotę w tej wizualizacji. Wierzchołkami tego grafu, będą strony internetowe, a krawędziami - linki na tejże stronie.
 
-Kod projektu jest udostępniany na licencji AGPL-3.0. Praca, którą obecnie czytasz, obięta jest licencją CC-BY-ND-4.0.
+Pierwsze wizualizacje struktury internetu pojawiały się już na początku jego istnienia (patrz rysunek \ref{fig:1973_internet_map}).
+
+\begin{figure}[H]
+	\center
+	\includegraphics[totalheight=8cm]{1973_internet_map.jpeg}
+	\caption{Mapa internetu z 1973 roku. Autor: Organizacja ARPANet; zdigitalizowane przez David-a Newbury\cite{arpaNetworkMap1973}}
+	\label{fig:1973_internet_map}
+\end{figure}
+
+Wizualizacje internetu z wykorzystaniem konceptu teorii grafów, zaczeły pojawiać się, gdy internet przestał być siecią wykorzystywaną stricte przez środowisko uniwersyteckie.
+
+Jedna z pierwszych takich wizualizacji została stworzona przez Cheswick-a i Burch-a. Pierwsza z wizualizacji stworzonych przez Cheswicka, to ta z sierpnia roku 1998 (patrz rysunek \ref{fig:cheswick1998}). Później wraz z rozwojem sieci, badacze tworzyli nowe mapy, inaczej wyglądającego już internetu, próbując przy tym różnych podejść przy koloryzacji i rozłożenia połączeń.\cite{cheswickInternetMappingProject} W 2000 roku, wydali oni, wraz z Branigan-em pracę opisującą ich badania.\cite{cheswick2000Mapping}
+
+\begin{figure}[H]
+	\center
+	\includegraphics[totalheight=8cm]{cheswick_aug98.jpg}
+	\caption{Mapa internetu z 1998 roku. Autorzy: Bill Cheswick, Hal Burch i Steve Branigan\cite{cheswickInternetMappingProject}\cite{cheswick2000Mapping}}
+	\label{fig:cheswick1998}
+\end{figure}
+
+Jedna z popularniejszych map, to ta stworzona przez Barrett-a Lyon-a, na rzecz Projektu Opte w roku 2003 (zobacz rysunek \ref{fig:opte2003}). Projekt Opte, podobnie jak poprzedni projekt, również trwał na przestrzeni lat. Dodatkowo, projekt ten, badał zarówno sieć IPv4, jak i sieć IPv6.\cite{lyonInternet} Zarówno ta, jak i poprzednia wizualizacja, prezentują to, jak poszczególne routery w sieci internetowej, są ze sobą połączone. Każdy pakiet, aby dotrzeć do swojego celu, musi zazwyczaj przejść przez kilka, wzajemnie połączonych routerów. Właściwość tą, sieci internetowej, można przykładowo badać, przy użyciu narzędzia terminalowego, dostępnego w systemach UNIX-owych, o nazwie "traceroute". Traceroute, dla danego węzła końcowego, opisuje ścieżkę, którą pakiety muszą przejść, aby tam dotrzeć.\cite{tracerouteLinuxMan}
+
+\begin{figure}[H]
+	\center
+	\includegraphics[totalheight=8cm]{opte2003.png}
+	\caption{Mapa internetu z 2003 roku. Stworzona przez Barrett-a Lyon-a, na rzecz Projektu Opte (ang. The Opte Project)\cite{lyonInternet}}
+	\label{fig:opte2003}
+\end{figure}
+
+Przykładowa ścieżka, przedstawiona przez narzędzie "traceroute", z serwera Oracle w Frankfurcie, do serwera Google.com:
+\begin{lstlisting}
+$ traceroute google.com
+traceroute to google.com (172.217.16.142), 30 hops max, 60 byte packets
+1  140.91.198.42 (140.91.198.42)  0.892 ms 140.91.198.45 (140.91.198.45)  0.824 ms 140.91.198.73 (140.91.198.73)  0.779 ms
+2  62.67.24.22 (62.67.24.22)  0.736 ms  0.693 ms  0.647 ms
+3  lag-110.ear5.Frankfurt1.Level3.net (62.67.24.21)  0.603 ms  0.641 ms  0.569 ms
+4  ae2.3221.edge8.frf1.neo.colt.net (171.75.10.151)  1.474 ms  0.774 ms  1.061 ms
+5  142.250.165.106 (142.250.165.106)  1.596 ms  2.482 ms  2.437 ms
+6  * * *
+7  172.253.50.150 (172.253.50.150)  1.679 ms 142.250.214.188 (142.250.214.188)  3.703 ms 172.253.66.138 (172.253.66.138)  3.549 ms
+8  192.178.109.218 (192.178.109.218)  1.033 ms 66.249.94.245 (66.249.94.245)  13.164 ms 66.249.95.169 (66.249.95.169)  1.943 ms
+9  * 216.239.40.147 (216.239.40.147)  2.293 ms zrh04s06-in-f142.1e100.net (172.217.16.142)  0.744 ms
+\end{lstlisting}
+Traceroute, wykorzystuje wartość time-to-live, która ustala maksymalną ilość dozwolonych przeskoków. Wartość ta, zmniejsza się co przeskok, a gdy osiągnie zero, router wyrzuci błąd ICMP, o przekroczonym czasie. Zaczynając od wartości 1 i regularnie ją zwiększając, traceroute jest w stanie zebrać informacje, na temat ścieżki, którą pakiet musi przejść. Gwiazdka ("*"), oznacza brak odpowiedzi ze strony routera.
+
+Innym, interesującym projektem z tej dziedziny, jest ten, zapoczątkowany w roku 2009, przez redaktora Kevin-a Kelly-ego. Poprosił on ludzi, w różnym wieku i o różnym poziomie ekspertyzy, o narysowanie mapy internetu. Zebrał on w ten sposób ponad 200 prac, które opublikował na portalu Flickr (zobacz dwie wybrane prace \ref{fig:kkimp1} \ref{fig:kkimp2}).\cite{popovaInternetChaos}\cite{kellyInternetMappingProject}
+
+\begin{figure}[H]
+	\center
+	\includegraphics[totalheight=8cm]{kkInternetMap1.jpg}
+	\caption{Rysunek wykonany przez 14-sto letniego ucznia (bądź uczennicę) na rzecz projektu Kevin-a Kelly-ego. Prawa autorskie należą do Kevin-a Kelly-ego.\cite{kellyInternetMap1}}
+	\label{fig:kkimp1}
+\end{figure}
+\begin{figure}[H]
+	\center
+	\includegraphics[totalheight=8cm]{kkInternetMap2.jpg}
+	\caption{Rysunek wykonany przez 23 letniego studenta, artystę (bądź studentkę, artystkę) na rzecz projektu Kevin-a Kelly-ego. Prawa autorskie należą do Kevin-a Kelly-ego.\cite{kellyInternetMap2}}
+	\label{fig:kkimp2}
+\end{figure}
+
+Jak można zauważyć, wiele było różnorodnych podejść do tematu wizualizacji tego, jak internet funkcjonuje. Żaden, jednak z powyższych projektów, nie zbadał jednej z najbardziej namacalnych zależności, a mianowicie, tego jak wyglądają połączenia między witrynami internetowymi. Prawie każda witryna, odsyła nas do wielu innych witryn. Służy to różnym celom, na przykład abyśmy mogli zgłębić powierzchownie opisane w tekście zagadnienie, aby zareklamować inną część serwisu lub produkt, bądź aby dać nam znać o prezencji danej firmy w mediach społecznościowych. Celów jest multum, część służy użytkownikom, część serwisowi i reklamodawcom; jedna część odsyła nas do nowej sekcji dostępnej na witrynie, inna zaś nieaktualizowana od dawna, odsyła nas do dawno już nie istniejącej witryny.
+
+Celem niniejszej pracy, jest projekt i implementacja programu do wizualizacji struktury internetu, przy wykorzystaniu teorii grafów. Wizualizacja ta będzie opierać się wyłącznie na dostępnych serwerach HTTP i HTTPS z pominięciem innych protokołów, aby utrzymać prostotę w tej wizualizacji. Wierzchołkami tego grafu, będą strony internetowe, a krawędziami - linki na tejże stronie.
+
+Kod projektu jest udostępniany na licencji AGPL-3.0. Praca, którą obecnie czytasz, objęta jest licencją CC-BY-ND-4.0.
 
 \textbf{Kod i praca:} \url{https://github.com/mbledkowski/interwebs}
 
@@ -41,7 +109,7 @@ Język stworzony przez Microsoft, będący nadzbiorem języka JavaScript. Dodaje
 \subsubsection{TypeScript Execute (TSX)}
 Narzędzie terminalowe, będące alternatywą dla komendy "node", które umożliwia uruchomienie kodu TypeScript bez wcześniejszego, ręcznego skompilowania tego kodu. Usprawnia ono również interoperowalność między zależnościami używającymi modułów EcmaScript, jak i modułów CommonJS.\cite{npmTsxReadme}
 \subsubsection{Performant Node Package Manager (PNPM)}
-Menadżer pakietów użyty w tym projekcie to alternatywa dla NPM (Node Package Manager). Zarówno jak NPM, PNPM pozwala nam na instalowanie bibliotek z repozytorium \url{https://www.npmjs.com/}, ale różni się metodyką, szczególnie w aspekcie przechowywania pakietów. PNPM, w odróżnieniu od NPM, zamiast pobierać pakiety do każdego projektu i przechowywać je oddzielnie, trzyma wszystkie pobrane pakiety w jednym miejscu i tworzy linki symboliczne w miejscach, gdzie dane pakiety są wykorzystywane.\cite{introPnpmDoc} Dzięki odmiennemu podejściu, przy tworzeniu nowych projektów, pobierane jest dużo mniej paczek ze zdalnego repozytorium, a w ich miejscu wykorzystywane są paczki już dostępne na maszynie. Linki symboliczne powodują również, że projekty na naszej maszynie zajmują mniej miejsca, gdyż zamiast trzymać każdą paczkę oddzielnie, współdzielą jedną przestrzeń. Terminalowy interfejs jest bardzo zbliżony pod kątem dostępnych opcji i nazewnictwa, zarówno do NPM-a, jak i Yarn-a (innego alternatywnego narzędzia do zarządzania Node-owymi pakietami).
+Menadżer pakietów użyty w tym projekcie to alternatywa dla NPM (Node Package Manager). Zarówno jak NPM, PNPM pozwala nam na instalowanie bibliotek z repozytorium \url{https://www.npmjs.com/}, ale różną się metodyką, szczególnie w aspekcie przechowywania pakietów. PNPM, w odróżnieniu od NPM, zamiast pobierać pakiety do każdego projektu i przechowywać je oddzielnie, trzyma wszystkie pobrane pakiety w jednym miejscu i tworzy linki symboliczne w miejscach, gdzie dane pakiety są wykorzystywane.\cite{introPnpmDoc} Dzięki odmiennemu podejściu, przy tworzeniu nowych projektów, pobierane jest dużo mniej paczek ze zdalnego repozytorium, a w ich miejscu wykorzystywane są paczki już dostępne na maszynie. Linki symboliczne powodują również, że projekty na naszej maszynie zajmują mniej miejsca, gdyż zamiast trzymać każdą paczkę oddzielnie, współdzielą jedną przestrzeń. Terminalowy interfejs jest bardzo zbliżony pod kątem dostępnych opcji i nazewnictwa, zarówno do NPM-a, jak i Yarn-a (innego alternatywnego narzędzia do zarządzania Node-owymi pakietami).
 
 \subsection{Technologie użyte w różnych miejscach}
 W celu stworzenia wizualizacji struktury internetu, potrzebne są trzy elementy:
@@ -102,7 +170,7 @@ Robot indeksujący został napisany w języku TypeScript, gdzie do ładowania i 
 
 Proces crawlowania rozpoczynany jest od 5 oficjalnych witryn amerykańskich firm typu Big-Tech, 4 chińskich, oraz od strony głównej Wikipedii. Moim zamierzeniem było, aby w możliwie jak najbardziej obiektywny sposób rozpocząć indeksowanie, bez faworyzowania konkretnych części internetu. Firmy Big-Tech, niewątpliwie są odpowiedzialne za większość dostępnych treści internetowych; a Wikipedia jest jednym z najpopularniejszych źródeł wiedzy w internecie, do tego nie będąc tworem nastawionym na zysk.
 
-Pojęte zostały kroki w celu mimiki ruchu z różnych urządzeń. Wykorzystane do tego celu zostały zarówno silnik Chromium, jak i Firefox. Silnik WebKit (występujący w przeglądarce Apple Safari), nie mógł zostać wykorzystany, ze względu na fakt, iż framework Playwright ma problemy z zainicjowaniem go na dystrybucjach innych niż Ubuntu.\cite{playwrightWebkitIssue} Najistotniejszym w mimice losowego ruchu, jest manipulacja zmienną "User-Agent", która podawana jest przy każdym zapytaniu, wysyłanym do serwera webowego. W tym celu zaimplementowana została biblioteka User-Agents autorstwa Evan Sangaline, która pozwala na wylosowanie zmiennej User-Agent, która będzie odpowiadała klientowi występującemu w świecie rzeczywistym. Zarówno silnik, jak i User-Agent wybierane są losowo dla każdego adresu URL.
+Pojęte zostały kroki w celu mimiki ruchu z różnych urządzeń. Wykorzystane do tego celu zostały zarówno silnik Chromium, jak i Firefox. Silnik WebKit (występujący w przeglądarce Apple Safari), nie mógł zostać wykorzystany, ze względu na fakt, iż framework Playwright ma problemy z zainicjowaniem go na dystrybucjach innych niż Ubuntu.\cite{playwrightWebkitIssue} Najistotniejszym w mimice losowego ruchu, jest manipulacja wartością "User-Agent", która podawana jest przy każdym zapytaniu, wysyłanym do serwera webowego. W tym celu zaimplementowana została biblioteka User-Agents autorstwa Evan Sangaline, która pozwala na wylosowanie zmiennej User-Agent, która będzie odpowiadała klientowi występującemu w świecie rzeczywistym. Zarówno silnik, jak i User-Agent wybierane są losowo dla każdego adresu URL.
 
 Adresy URL przechowywane są w tablicy, nazwanej kolejką. Ilość adresów ładowanych w jednym momencie, dla kolejki o długości \(n\); to \(m\), gdzie \(m\) odpowiada ilości wątków procesora, jeżeli \(m < n\). Takie podejście ma na celu wykorzystnie w pełni potencjału maszyny.
 
@@ -110,10 +178,40 @@ Program, dla każdej załadowanej witryny, sprawdza wszystkie Anchor elementy (t
 
 Każdy adres, po załadowaniu, dodawany jest do bazy danych, gdzie obecna witryna dodawana jest jako węzeł, bądź jej dane są aktualizowane. Krawędzie tegoż węzła o wartości "linksTo" wskazują węzły stron, które dana witryna linkuje. W przypadku w którym węzeł reprezentuje adres, który jest jedynie przekierowaniem, jego wartość "redirect", zmieniana jest na true.
 
+Komunikacja z bazą danych odbywa się przy pomocy klasy "Database", wykorzystującej bibliotekę "pg" z repozytorium NPM. Klasa ta posiada następujące metody:
+\begin{itemize}
+	\item "\lstinline{build}", dla zainicjowania rozszerzenia Age
+	\item "\lstinline{createDatabase}", dla stworzenia nowego grafu w bazie danych
+	\item "\lstinline{addWebPage}", która przyjmuje wartości "url" (zmienna tekstowa), "title" (zmienna tekstowa), "links" (tablica tekstowa), "redirect" (zmienna boolowska). Zmienne odpowiadające za adres ("url"), tytuł ("title") i przekierowanie ("redirect") przypisywane są do nowego węzła "webpage", bądź do węzła tego samego typu, lecz wcześniej zdefiniowanego z adresem tym samym co adres podany. Na podstawie linków ("links"), tworzone są nowe węzły "webpage", które łączone są krawędzią "linksTo" z węzłem wcześniej zdefiniowanym. Węzły stworzone na podstawie "links" zawierają jedynie adres URL, dlatego w domyśle tworzone są one, aby później wypełnić je adekwatnymi danymi i połączyć je z innymi węzłami.
+	\item "\lstinline{dropDatabase}", dla usunięcia całego grafu z bazy danych
+	\item "\lstinline{close}", aby zamknąć połączenie z bazą danych, zainicjowane przez konstruktor tejże klasy
+\end{itemize}
 
+\subsection{Baza danych}
+Baza danych, która jest wykorzystywana do zapisu danych zebranych przez robot indeksujący, to PostgreSQL z rozszerzeniem Apache Age, dodającym możliwość korzystania z Postgres-a, jak z grafowej bazy danych, ze wsparciem dla języka OpenCypher.
 
+Baza ta uruchamiana jest z użyciem narzędzia Docker, z wykorzystaniem obrazu kontenerowego apache/age z repozytorium Docker Hub. Komenda użyta do uruchomienia bazy danych to "\lstinline{docker run --name postgres -p 5455:5432 -e POSTGRES_USER=interwebs -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgresDB -d apache/age}". W naszym przypadku hasło jakiego użyjemy, nie ma większego znaczenia, gdyż nie wystawiamy naszej bazy do internetu, a oprogramowanie z niej korzystające działa w pełni lokalnie.
+
+Wykorzystany został taki, a nie inny typ bazy danych, aby jego struktura, najlepiej wpasowała się w strukturę internetu właśnie. Internet, nie jest siecią nadzorowaną przez jeden byt. Witryny tworzone są przez wiele ludzi i firm, z całego świata. Każda witryna może wskazywać dowolną, inną witrynę. Aby odnaleźć prawidłowości w tym pozornym chaosie, potrzebna jest struktura, która dobrze odzwierciedla naturę tego chaosu. Taką strukturą właśnie, jest struktura grafowa.
+
+Apache Age, jest projektem zarówno nowym, jak i niszowym. Programiści odpowiedzialni za to oprogramowanie, zdecydowali się na stworzenie rozszerzenia grafowego, do bazy, która fundamentalnie jest bazą relacyjną, czyli do PostgreSQL-a. Z tego też powodu, wszelkie dane wprowadzane przy użyciu tego rozszerzenia, są ostatecznie zapisywane w sposób relacyjny. Nie ma to jednak większgo znaczenia, gdyż interfejs tego programu, jest dostatecznie rozwinięty, a jedną z zalet pobocznych takiego wyboru technologii, jest to, że w przypadku jakichkolwiek problemów, do danych można dostać się przy użyciu rozwijanych latami rozwiązań Postgres-owych.
+
+\subsection{Aplikacja webowa}
+Aplikacja została zainicjalizowana przy użyciu narzędzia "create-t3-app". W celu wizualizacji danych, wykorzystana została biblioteka D3; a konkretnie biblioteka stworzona pod Reacta, "react-force-graph-2d", która tworzy na podstawie D3, wizualizację danych grafowych.\cite{reactForceGraph} Wizualizacja ta wykorzystuje algorytm typu force-directed graph (z ang. graf wykorzystujący symulację fizyczną \cite{zaryjewskiForceDirectedGraph}). Algorytmy te kalkulują rozłożenie grafu, używając wyłącznie informacji zawartych w samym grafie. Wykorzystują one przykładowo fizykę sprężyn, gdzie sprężynami są połączenia między węzłami (krawędzie), aby znaleźć stabilną konfigurację.\cite{kobourovSpringEmbeddersForce}
+
+Aplikacja składa się z dwóch części, czyli z klienta, oraz serwera. Po stronie serwera znajduje się logika, odpowiadająca za komunikację z bazą danych, oraz renderowane są strony, aby klient nie musiał czekać na załadowanie się plików JavaScript (tzw. server-side rendering, z ang. renderowanie po stronie serwera).\cite{cloudinaryServerSideRendering}
+
+\section{Implementacja}
+
+\section{Podsumowanie}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[totalheight=8cm]{interface.png}
+	\caption{Gotowa wizualizacja struktury internetu.}
+\end{figure}
 
 \printbibliography
-
+\listoffigures
 \end{document}
 
