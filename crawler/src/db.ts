@@ -24,15 +24,6 @@ export class Database {
     })
   }
 
-  async build() {
-    const client = await this.pool.connect();
-    await client.query(`
-      CREATE EXTENSION IF NOT EXISTS age;
-      LOAD 'age';
-      SET search_path = ag_catalog, "$user", public;
-    `);
-  }
-
   async createDatabase() {
     const client = await this.pool.connect();
     await client.query(`SELECT create_graph('${this.graphName}');`);

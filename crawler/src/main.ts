@@ -90,7 +90,6 @@ async function main() {
   }
 
   const db = new Database();
-  await db.build();
 
   await db.dropDatabase();
   await db.createDatabase();
