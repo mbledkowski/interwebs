@@ -14,11 +14,19 @@ export class Database {
       user: "interwebs",
     });
     this.graphName = "interwebs";
+
+    this.pool.on('connect', async (client) => {
+      await client.query(`
+      CREATE EXTENSION IF NOT EXISTS age;
+      LOAD 'age';
+      SET search_path = ag_catalog, "$user", public;
+      `);
+    })
   }
 
   async build() {
-    await this.pool.connect();
-    await this.pool.query(`
+    const client = await this.pool.connect();
+    await client.query(`
       CREATE EXTENSION IF NOT EXISTS age;
       LOAD 'age';
       SET search_path = ag_catalog, "$user", public;
@@ -26,7 +34,8 @@ export class Database {
   }
 
   async createDatabase() {
-    await this.pool.query(`SELECT create_graph('${this.graphName}');`);
+    const client = await this.pool.connect();
+    await client.query(`SELECT create_graph('${this.graphName}');`);
   }
 
   async addWebPage(
@@ -36,7 +45,8 @@ export class Database {
     redirect: boolean
   ) {
     try {
-      await this.pool.query(`
+      const client = await this.pool.connect();
+      await client.query(`
         SELECT *
         FROM cypher('interwebs', $$
             MERGE (page:webpage {url: "${url}"})
@@ -47,7 +57,7 @@ export class Database {
       const queueOfPromises: Promise<pg.QueryResult>[] = [];
       for (let link of links) {
         queueOfPromises.push(
-          this.pool.query(`
+          client.query(`
         SELECT *
         FROM cypher('interwebs', $$
           MATCH (page:webpage {url: "${url}"})
@@ -66,7 +76,8 @@ export class Database {
 
   async dropDatabase() {
     try {
-      await this.pool.query(`SELECT drop_graph('${this.graphName}', true);`);
+      const client = await this.pool.connect();
+      await client.query(`SELECT drop_graph('${this.graphName}', true);`);
     } catch (err) {
       console.log(err);
     }
