@@ -15,8 +15,8 @@ export class Database {
     });
     this.graphName = "interwebs";
 
-    this.pool.on('connect', async (client) => {
-      await client.query(`
+    this.pool.on('connect', (client) => {
+      client.query(`
       CREATE EXTENSION IF NOT EXISTS age;
       LOAD 'age';
       SET search_path = ag_catalog, "$user", public;
@@ -26,7 +26,11 @@ export class Database {
 
   async createDatabase() {
     const client = await this.pool.connect();
-    await client.query(`SELECT create_graph('${this.graphName}');`);
+    try {
+      await client.query(`SELECT create_graph('${this.graphName}');`);
+    } finally {
+      client.release();
+    }
   }
 
   async addWebPage(
@@ -35,8 +39,8 @@ export class Database {
     links: string[],
     redirect: boolean
   ) {
+    const client = await this.pool.connect();
     try {
-      const client = await this.pool.connect();
       await client.query(`
         SELECT *
         FROM cypher('interwebs', $$
@@ -62,15 +66,19 @@ export class Database {
       await Promise.all(queueOfPromises);
     } catch (err) {
       console.log(err);
+    } finally {
+      client.release();
     }
   }
 
   async dropDatabase() {
+    const client = await this.pool.connect();
     try {
-      const client = await this.pool.connect();
       await client.query(`SELECT drop_graph('${this.graphName}', true);`);
     } catch (err) {
       console.log(err);
+    } finally {
+      client.release();
     }
   }
 
