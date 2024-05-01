@@ -2,9 +2,13 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 import { Database } from "~/server/api/db";
 
+import ColorHash from "color-hash";
+import stringHash from "string-hash";
+import { formatHex } from "culori";
+
 const db = new Database();
 await db.build();
-
+const colorhash = new ColorHash({ lightness: 0.5 })
 export const graphRouter = createTRPCRouter({
   nodes: publicProcedure.query(async () => {
     const nodes = await db.getNodes();
@@ -19,4 +23,40 @@ export const graphRouter = createTRPCRouter({
     }));
     return res;
   }),
+  nodesAndEdgesColour: publicProcedure.query(async () => {
+    const nodes = await db.getNodes();
+    const rawEdges = await db.getEdges();
+    const edges = rawEdges.map((edge) => {
+      return {
+        ...edge,
+        source: edge.start_id,
+        target: edge.end_id,
+        color: colorhash.hex(nodes.find((node) => node.id === edge.start_id)!.url)
+      }
+    });
+    return { nodes, edges }
+  }),
+  nodesAndEdgesColourDomainBased: publicProcedure.query(async () => {
+    const nodes = await db.getNodes();
+    const rawEdges = await db.getEdges();
+    const edges = rawEdges.map((edge) => {
+      const startUrl = new URL(nodes.find((node) => node.id === edge.start_id)!.url)
+      const hostname = startUrl.hostname
+      const domainTree = hostname.split('.').reverse()
+      const domainTreeHash = domainTree.map((domain) => stringHash(domain))
+
+      let hue = 0;
+      for (let i = 0; i < domainTreeHash.length; i++) {
+        hue += 360 / Math.pow(15, i + 1) * (domainTreeHash[i]! % 15)
+      }
+
+      return {
+        ...edge,
+        source: edge.start_id,
+        target: edge.end_id,
+        color: formatHex({ mode: "okhsl", h: hue, s: 1, l: 0.5 })
+      }
+    });
+    return { nodes, edges }
+  })
 });

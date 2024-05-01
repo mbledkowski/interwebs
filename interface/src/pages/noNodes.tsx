@@ -5,7 +5,7 @@ import { api } from "~/utils/api";
 
 const Viz = dynamic(
   () => {
-    return import("./components/graph");
+    return import("./components/graphNoNodes");
   },
   { ssr: false },
 );
@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Default - interwebs</title>
+        <title>NoNodes - interwebs</title>
         <meta name="description" content="Interwebs - internet visualization" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
