@@ -1,0 +1,47 @@
+[0, 2]: Start: https://apple.com/; Final: https://www.apple.com/; Title: Apple
+[0, 9]: Url: https://en.wikipedia.org/wiki/Main_Page; Title: Wikipedia, the free encyclopedia
+[0, 0]: Url: https://abc.xyz/; Title: Alphabet Investor Relations
+[0, 3]: Start: https://meta.com/; Final: https://www.meta.com/pl/; Title: Meta – Kup gogle VR i inteligentne okulary | Meta Store
+[0, 1]: Url: https://www.amazon.com/; Title: Amazon.com. Spend less. Smile more.
+[0, 4]: Start: https://www.microsoft.com/; Final: https://www.microsoft.com/pl-pl/; Title: Microsoft – chmura, komputery, aplikacje i gry
+[0, 8]: Url: https://www.mi.com/global/; Title: Xiaomi Global | Xiaomi Official Website
+[0, 5]: Url: https://www.baidu.com/; Title: 百度一下，你就知道
+[0, 7]: Url: https://www.tencent.com/en-us/; Title: Tencent 腾讯
+[0, 6]: Start: https://www.alibabagroup.com/; Final: https://www.alibabagroup.com/en-US/; Title: Alibaba Group Official Website
+[1, 22]: Url: https://www.apple.com/mac-mini/; Title: Mac mini - Apple
+[1, 18]: Url: https://www.apple.com/mac/; Title: Mac - Apple
+[1, 17]: Url: https://www.apple.com/r/store/government/; Title: Apple Store for Government - Apple
+[1, 15]: Url: https://www.apple.com/retail/business/; Title: Small Business and Apple Retail - Apple
+[1, 9]: Url: https://www.apple.com/retail/; Title: Apple Store - Find a Store - Apple
+[1, 2]: Start: https://www.apple.com/us/shop/goto/store; Final: https://www.apple.com/store; Title: Apple Store Online - Apple
+[1, 6]: Start: https://www.apple.com/us/shop/goto/buy_watch; Final: https://www.apple.com/shop/buy-watch; Title: Buy Apple Watch - Apple
+[1, 11]: Start: https://www.apple.com/us/shop/goto/trade_in; Final: https://www.apple.com/shop/trade-in; Title: Apple Trade In - Apple
+[1, 5]: Start: https://www.apple.com/us/shop/goto/buy_iphone; Final: https://www.apple.com/shop/buy-iphone; Title: Buy iPhone - Apple
+[1, 0]: Url: https://www.apple.com/pl/; Title: Apple (Polska)
+[1, 12]: Start: https://www.apple.com/us/shop/goto/payment_plan; Final: https://www.apple.com/shop/browse/financing; Title: Financing and Credit - Apple
+[1, 10]: Start: https://www.apple.com/us/shop/goto/order/list; Final: https://secure6.store.apple.com/shop/signIn/orders?ssi=1AAABjz8GdjEgwcmZTXEOWx541LjqqPHZdhm6EfXcNyd2stcmBbpW-iwAAAAxaHR0cHM6Ly9zZWN1cmU2LnN0b3JlLmFwcGxlLmNvbS9zaG9wL29yZGVyL2xpc3R8fAACAS-ChgLITqvwex69zB-XqX7P_5-zeG0v9pU9m7XaB9HD; Title: Order Status - Apple
+[1, 7]: Start: https://www.apple.com/us/shop/goto/buy_vision; Final: https://www.apple.com/shop/buy-vision; Title: Buy Apple Vision - Apple
+[1, 1]: Url: https://www.apple.com/; Title: Apple
+[1, 21]: Url: https://www.apple.com/imac/; Title: iMac - Apple
+[1, 4]: Start: https://www.apple.com/us/shop/goto/buy_ipad; Final: https://www.apple.com/shop/buy-ipad; Title: Buy iPad - Apple
+[1, 20]: Url: https://www.apple.com/macbook-pro/; Title: MacBook Pro - Apple
+[1, 16]: Start: https://www.apple.com/us/shop/goto/eppstore/veteransandmilitary; Final: https://www.apple.com/shop/browse/home/veterans_military; Title: Veterans and Military Store - Apple
+[1, 19]: Url: https://www.apple.com/macbook-air/; Title: MacBook Air 13-inch and MacBook Air 15-inch - Apple
+[1, 3]: Start: https://www.apple.com/us/shop/goto/buy_mac; Final: https://www.apple.com/shop/buy-mac; Title: Buy Mac - Apple
+[1, 23]: Url: https://www.apple.com/mac-studio/; Title: Mac Studio - Apple
+[1, 13]: Start: https://www.apple.com/us/shop/goto/special_deals; Final: https://www.apple.com/shop/refurbished; Title: Certified Refurbished Products - Apple
+[1, 8]: Start: https://www.apple.com/us/shop/goto/buy_accessories; Final: https://www.apple.com/shop/accessories/all; Title: Apple Accessories for Apple Watch, iPhone, iPad, Mac and Vision Pro - Apple
+[1, 14]: Start: https://www.apple.com/us/shop/goto/educationrouting; Final: https://www.apple.com/us-edu/store; Title: Education Pricing and Student Discounts - Education - Apple
+[2, 12]: Url: https://www.apple.com/education/; Title: Education - Apple
+[2, 16]: Url: https://www.apple.com/ipad-select/; Title: Select an iPad - Apple
+[2, 10]: Url: https://www.apple.com/icloud/; Title: iCloud+ - Apple
+[2, 20]: Url: https://www.apple.com/ipad/compare/; Title: iPad - Compare Models - Apple
+[2, 19]: Url: https://www.apple.com/ipad-keyboards/; Title: iPad Keyboards - Apple
+[2, 1]: Url: https://www.apple.com/displays/; Title: Displays - Apple
+[2, 2]: Url: https://www.apple.com/mac/compare/; Title: Mac - Compare Models - Apple
+[2, 3]: Url: https://www.apple.com/mac/mac-does-that/; Title: Mac - Mac Does That - Apple
+[2, 18]: Url: https://www.apple.com/apple-pencil/; Title: Apple Pencil - Apple
+[2, 6]: Url: https://www.apple.com/support/products/mac/; Title: AppleCare Products - Mac - Apple
+[2, 5]: Url: https://support.apple.com/mac?cid=gn-ols-mac-psp-prodfly; Title: Mac - Official Apple Support
+[2, 23]: Url: https://support.apple.com/ipad?cid=gn-ols-ipad-psp-prodfly; Title: iPad - Official Apple Support
+

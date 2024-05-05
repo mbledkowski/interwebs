@@ -4,18 +4,101 @@
 \usepackage[T1]{fontenc}
 \usepackage[polish]{babel}
 
+\usepackage[autostyle]{csquotes}
+\MakeOuterQuote{"}
+
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setmonofont[SizeFeatures={Size=10}]{Fira Code}
+
 \usepackage[
   backend=biber,
   style=numeric,
-  sorting=ynt,
+  sorting=none,
   block=ragged
 ]{biblatex}
+\usepackage[autostyle]{csquotes}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{listings}
+\usepackage{xeCJK}
 \addbibresource{bibliography.bib}
-\lstset{basicstyle=\small\fontfamily{qcr}\selectfont, numbers=left, numberstyle=\tiny, frame=single, breaklines=true}
+
+% Source: https://github.com/ghammock/LaTeX_Listings_JavaScript_ES6
+\usepackage{color}
+\lstdefinelanguage{JavaScript}{
+  morekeywords=[1]{break, continue, delete, else, for, function, if, in,
+    new, return, this, typeof, var, void, while, with},
+  % Literals, primitive types, and reference types.
+  morekeywords=[2]{false, null, true, boolean, number, undefined,
+    Array, Boolean, Date, Math, Number, String, Object},
+  % Built-ins.
+  morekeywords=[3]{eval, parseInt, parseFloat, escape, unescape},
+  sensitive,
+  morecomment=[s]{/*}{*/},
+  morecomment=[l]//,
+  morecomment=[s]{/**}{*/}, % JavaDoc style comments
+  morestring=[b]',
+  morestring=[b]"
+}[keywords, comments, strings]
+\lstalias[]{ES6}[ECMAScript2015]{JavaScript}
+\lstdefinelanguage[ECMAScript2015]{JavaScript}[]{JavaScript}{
+  morekeywords=[1]{await, async, case, catch, class, const, default, do,
+    enum, export, extends, finally, from, implements, import, instanceof,
+    let, static, super, switch, throw, try},
+  morestring=[b]` % Interpolation strings.
+}
+% Requires package: color.
+\definecolor{mediumgray}{rgb}{0.3, 0.4, 0.4}
+\definecolor{mediumblue}{rgb}{0.0, 0.0, 0.8}
+\definecolor{forestgreen}{rgb}{0.13, 0.55, 0.13}
+\definecolor{darkviolet}{rgb}{0.58, 0.0, 0.83}
+\definecolor{royalblue}{rgb}{0.25, 0.41, 0.88}
+\definecolor{crimson}{rgb}{0.86, 0.8, 0.24}
+
+\lstdefinestyle{JSES6Base}{
+  backgroundcolor=\color{white},
+  basicstyle=\ttfamily,
+  breakatwhitespace=false,
+  breaklines=false,
+  captionpos=b,
+  columns=fullflexible,
+  commentstyle=\color{mediumgray}\upshape,
+  emph={},
+  emphstyle=\color{crimson},
+  extendedchars=true,  % requires inputenc
+  fontadjust=true,
+  frame=single,
+  identifierstyle=\color{black},
+  keepspaces=true,
+  keywordstyle=\color{mediumblue},
+  keywordstyle={[2]\color{darkviolet}},
+  keywordstyle={[3]\color{royalblue}},
+  numbers=left,
+  numbersep=5pt,
+  numberstyle=\tiny\color{black},
+  rulecolor=\color{black},
+  showlines=true,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  stringstyle=\color{forestgreen},
+  tabsize=2,
+  title=\lstname,
+  upquote=true  % requires textcomp
+}
+\lstdefinestyle{JavaScript}{
+  language=JavaScript,
+  style=JSES6Base
+}
+\lstdefinestyle{ES6}{
+  language=ES6,
+  style=JSES6Base
+}
+
+
+\lstset{basicstyle=\small\ttfamily, numbers=left, numberstyle=\tiny, frame=single, breaklines=true}
 
 \title{Wizualizacja struktury internetu z wykorzystaniem teorii grafów}
 \author{Maciej Błędkowski \\ Nr albumu 63112 \\ \\ Prof. dr hab. Bernard Kubiak \\ \\ \\ Wydział Informatyki i Nowych Technologii \\ Uniwersytet WSB Merito w Gdańsku}
@@ -141,9 +224,11 @@ Najpopularniejszą grafową bazą danych jest niewątpiwie Neo4j. Spełnia ona w
 
 Inną bazą danych, która była rozważana do użycia przy tym projekcie to Dgraph. Na pierwszy rzut oka może wydawać się, że Dgraph spełnia nasze wymagania, lecz jest to projekt dosyć młody, a co za tym idzie, dokumentacja jest w wielu miejscach wybrakowana. Przy próbie wykorzystania tejże bazy, napotkałem na problemy, których nie rozwiązać nie była w stanie dokumentacja.
 
-Kolejna baza danych, która była rozpatrywana, to JanusGraph. Problemy napotkane w przypadku JanusGraph to stosowanie reguły ACID i stabilność działania. JanusGraph może wykorzystywać różne bazy danych pod spodem i może być skonfigurowany w różny sposób. Z tego względu przestrzeganie reguły ACID zależne jest od danej konfiguracji. W naszym przypadku pochylę się wyłącznie nad domyślną konfiguracją, dostarczoną w oficjalnym kontenerze Docker-owym. Problemem jaki został napotkany, przy użyciu danego kontenera, jest taki, że przy użyciu asynchronicznego wywoływania funkcji, baza danych po pewnym czasie zaczyna wyrzucać błędy, a dane w niej do tej pory zapisane, jest ciężko odzyskać.
+Kolejna baza danych, która była rozpatrywana, to JanusGraph. Problemy napotkane w przypadku JanusGraph to stosowanie reguły ACID i stabilność działania. JanusGraph może wykorzystywać różne bazy danych pod spodem i może być skonfigurowany w różny sposób. Z tego względu przestrzeganie reguły ACID zależne jest od danej konfiguracji.
 
-Bazą danych która w pełni spełniła nasze wymagania, jest Apache Age, którą opisano poniżej.
+W naszym przypadku pochylę się wyłącznie nad domyślną konfiguracją, dostarczoną w oficjalnym kontenerze Docker-owym. Problemem jaki został napotkany, przy użyciu danego kontenera, jest taki, że przy użyciu asynchronicznego wywoływania funkcji, baza danych po pewnym czasie zaczyna wyrzucać błędy, a dane w niej do tej pory zapisane, jest ciężko odzyskać.
+
+Bazą danych która w pełni spełniła nasze wymagania, jest Apache Age, którą opisałem poniżej.
 
 Warto w tym miejscu wspomnieć, iż inną bazą danych, która była dobrym kandydatem, jest TerminusDB, jednak ze względu na fakt, iż Apache Age spełniło nasze oczekiwania, nie kontynuowaliśmy rozpatrywań.
 
@@ -154,7 +239,7 @@ Nazywany również skrótowo Postgres, to obiektowo-relacyjna baza danych, jak i
 \subsection{Aplikacja webowa}
 Program komputerowy, który wykorzystuje przeglądarkę internetową, jak i technologie webowe, do wykonywania różnych zadań, często poprzez internet. Aplikacja webowa, zazwyczaj używa języka programowania JavaScript i języka znaczników HTML, ze względu na to, że wykonanie naszego programu zależy od przeglądarki.\cite{stackpathWebapp} W tej pracy aplikacja webowa, istnieje w celu stworzenia graficznej wizualizacji danych, które wcześniej zebraliśmy do naszej bazy danych.
 \subsubsection{T3-app}
-"T3 stack", to zestaw technologii webowych, stworzony przez Theo Browne. Zestaw ten skupia się na prostocie, modularności i bezpieczności typów. "create-t3-app", to narzędzie terminalowe, służące do usprawnienia procesu konfiguracji aplikacji bazowanej na zestawie T3. Kluczowe technologie to Next.js i TypeScript, opcjonalnymi lecz rekomendowanymi dodatkami są Tailwind CSS, tRPC, Prisma i NextAuth.js.\cite{introT3}
+"T3 stack", to zestaw technologii webowych, stworzony przez Theo Browne. Zestaw ten skupia się na prostocie, modularności i bezpieczności typów. Narzędzie terminalowe "create-t3-app", służące do usprawnienia procesu konfiguracji aplikacji bazowanej na zestawie T3. Kluczowe technologie to Next.js i TypeScript, opcjonalnymi lecz rekomendowanymi dodatkami są Tailwind CSS, tRPC, Prisma i NextAuth.js.\cite{introT3}
 \subsubsection{TypeScript Remote Procedure Call (tRPC)}
 Biblioteka, upraszczająca proces budowy w pełni bezpiecznych typowo inteferfejsów programisty, bez użycia schematów i generacji kodu. W projektach które używają w pełni języka TypeScript, tRPC pozwala dzielić się typami między klientem, a serwerem; bez powierzania tego do generatora kodu.\cite{introTRPC}
 \subsubsection{React}
@@ -168,9 +253,9 @@ Biblioteka języka JavaScript, ułatwiająca proces tworzenia wizualizacji danyc
 \subsection{Robot indeksujący}
 Robot indeksujący został napisany w języku TypeScript, gdzie do ładowania i renderowania stron wykorzystana została biblioteka Playwright.
 
-Proces crawlowania rozpoczynany jest od 5 oficjalnych witryn amerykańskich firm typu Big-Tech, 4 chińskich, oraz od strony głównej Wikipedii. Moim zamierzeniem było, aby w możliwie jak najbardziej obiektywny sposób rozpocząć indeksowanie, bez faworyzowania konkretnych części internetu. Firmy Big-Tech, niewątpliwie są odpowiedzialne za większość dostępnych treści internetowych; a Wikipedia jest jednym z najpopularniejszych źródeł wiedzy w internecie, do tego nie będąc tworem nastawionym na zysk.
+Proces crawlowania rozpoczynany jest od pięciu oficjalnych witryn amerykańskich firm typu Big-Tech, czterech chińskich, oraz od strony głównej Wikipedii. Moim zamierzeniem było, aby w możliwie jak najbardziej obiektywny sposób rozpocząć indeksowanie, bez faworyzowania konkretnych części internetu. Firmy Big-Tech, niewątpliwie są odpowiedzialne za większość dostępnych treści internetowych; a Wikipedia jest jednym z najpopularniejszych źródeł wiedzy w internecie, do tego nie będąc tworem nastawionym na zysk.
 
-Pojęte zostały kroki w celu mimiki ruchu z różnych urządzeń. Wykorzystane do tego celu zostały zarówno silnik Chromium, jak i Firefox. Silnik WebKit (występujący w przeglądarce Apple Safari), nie mógł zostać wykorzystany, ze względu na fakt, iż framework Playwright ma problemy z zainicjowaniem go na dystrybucjach innych niż Ubuntu.\cite{playwrightWebkitIssue} Najistotniejszym w mimice losowego ruchu, jest manipulacja wartością "User-Agent", która podawana jest przy każdym zapytaniu, wysyłanym do serwera webowego. W tym celu zaimplementowana została biblioteka User-Agents autorstwa Evan Sangaline, która pozwala na wylosowanie zmiennej User-Agent, która będzie odpowiadała klientowi występującemu w świecie rzeczywistym. Zarówno silnik, jak i User-Agent wybierane są losowo dla każdego adresu URL.
+Pojęte zostały kroki w celu mimiki ruchu z różnych urządzeń. Wykorzystane do tego celu zostały zarówno silnik Chromium, jak i Firefox. Silnik WebKit (występujący w przeglądarce Apple Safari), nie mógł zostać wykorzystany, ze wzgędu na fakt, iż framework Playwright ma problemy z zainicjowaniem go na dystrybucjach innych niż Ubuntu.\cite{playwrightWebkitIssue} Najistotniejszym w mimice losowego ruchu, jest manipulacja wartością "User-Agent", która podawana jest przy każdym zapytaniu, wysyłanym do serwera webowego. W tym celu zaimplementowana została biblioteka User-Agents autorstwa Evan Sangaline, która pozwala na wylosowanie zmiennej User-Agent, która będzie odpowiadała klientowi występującemu w świecie rzeczywistym. Zarówno silnik, jak i User-Agent wybierane są losowo dla każdego adresu URL.
 
 Adresy URL przechowywane są w tablicy, nazwanej kolejką. Ilość adresów ładowanych w jednym momencie, dla kolejki o długości \(n\); to \(m\), gdzie \(m\) odpowiada ilości wątków procesora, jeżeli \(m < n\). Takie podejście ma na celu wykorzystnie w pełni potencjału maszyny.
 
@@ -180,17 +265,17 @@ Każdy adres, po załadowaniu, dodawany jest do bazy danych, gdzie obecna witryn
 
 Komunikacja z bazą danych odbywa się przy pomocy klasy "Database", wykorzystującej bibliotekę "pg" z repozytorium NPM. Klasa ta posiada następujące metody:
 \begin{itemize}
-	\item "\lstinline{build}", dla zainicjowania rozszerzenia Age
-	\item "\lstinline{createDatabase}", dla stworzenia nowego grafu w bazie danych
-	\item "\lstinline{addWebPage}", która przyjmuje wartości "url" (zmienna tekstowa), "title" (zmienna tekstowa), "links" (tablica tekstowa), "redirect" (zmienna boolowska). Zmienne odpowiadające za adres ("url"), tytuł ("title") i przekierowanie ("redirect") przypisywane są do nowego węzła "webpage", bądź do węzła tego samego typu, lecz wcześniej zdefiniowanego z adresem tym samym co adres podany. Na podstawie linków ("links"), tworzone są nowe węzły "webpage", które łączone są krawędzią "linksTo" z węzłem wcześniej zdefiniowanym. Węzły stworzone na podstawie "links" zawierają jedynie adres URL, dlatego w domyśle tworzone są one, aby później wypełnić je adekwatnymi danymi i połączyć je z innymi węzłami.
-	\item "\lstinline{dropDatabase}", dla usunięcia całego grafu z bazy danych
-	\item "\lstinline{close}", aby zamknąć połączenie z bazą danych, zainicjowane przez konstruktor tejże klasy
+	\item "build", dla zainicjowania rozszerzenia Age
+	\item "createDatabase", dla stworzenia nowego grafu w bazie danych
+	\item "addWebPage", która przyjmuje wartości "url" (zmienna tekstowa), "title" (zmienna tekstowa), "links" (tablica tekstowa), "redirect" (zmienna boolowska). Zmienne odpowiadające za adres ("url"), tytuł ("title") i przekierowanie ("redirect") przypisywane są do nowego węzła "webpage", bądź do węzła tego samego typu, lecz wcześniej zdefiniowanego z adresem tym samym co adres podany. Na podstawie linków ("links"), tworzone są nowe węzły "webpage", które łączone są krawędzią "linksTo" z węzłem wcześniej zdefiniowanym. Węzły stworzone na podstawie "links" zawierają jedynie adres URL, dlatego w domyśle tworzone są one, aby później wypełnić je adekwatnymi danymi i połączyć je z innymi węzłami.
+	\item "dropDatabase", dla usunięcia całego grafu z bazy danych
+	\item "close", aby zamknąć połączenie z bazą danych, zainicjowane przez konstruktor tejże klasy
 \end{itemize}
 
 \subsection{Baza danych}
 Baza danych, która jest wykorzystywana do zapisu danych zebranych przez robot indeksujący, to PostgreSQL z rozszerzeniem Apache Age, dodającym możliwość korzystania z Postgres-a, jak z grafowej bazy danych, ze wsparciem dla języka OpenCypher.
 
-Baza ta uruchamiana jest z użyciem narzędzia Docker, z wykorzystaniem obrazu kontenerowego apache/age z repozytorium Docker Hub. Komenda użyta do uruchomienia bazy danych to "\lstinline{docker run --name postgres -p 5455:5432 -e POSTGRES_USER=interwebs -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgresDB -d apache/age}". W naszym przypadku hasło jakiego użyjemy, nie ma większego znaczenia, gdyż nie wystawiamy naszej bazy do internetu, a oprogramowanie z niej korzystające działa w pełni lokalnie.
+Baza ta uruchamiana jest z użyciem narzędzia Docker, z wykorzystaniem obrazu kontenerowego apache/age z repozytorium Docker Hub.
 
 Wykorzystany został taki, a nie inny typ bazy danych, aby jego struktura, najlepiej wpasowała się w strukturę internetu właśnie. Internet, nie jest siecią nadzorowaną przez jeden byt. Witryny tworzone są przez wiele ludzi i firm, z całego świata. Każda witryna może wskazywać dowolną, inną witrynę. Aby odnaleźć prawidłowości w tym pozornym chaosie, potrzebna jest struktura, która dobrze odzwierciedla naturę tego chaosu. Taką strukturą właśnie, jest struktura grafowa.
 
@@ -202,14 +287,265 @@ Aplikacja została zainicjalizowana przy użyciu narzędzia "create-t3-app". W c
 Aplikacja składa się z dwóch części, czyli z klienta, oraz serwera. Po stronie serwera znajduje się logika, odpowiadająca za komunikację z bazą danych, oraz renderowane są strony, aby klient nie musiał czekać na załadowanie się plików JavaScript (tzw. server-side rendering, z ang. renderowanie po stronie serwera).\cite{cloudinaryServerSideRendering}
 
 \section{Implementacja}
+\subsection{Konfiguracja maszyny}
+Komputer, na którym uruchamiony zostanie nasz program, musi spełniać określone wymagania, aby program ten wykonał się bez większych przeszkód.
 
-\section{Podsumowanie}
+Kod programu, pisany był z myślą o systemach UNIX-owych (spełniających standard POSIX). Z tego też powodu, wystąpić mogą problemy przy próbie uruchomienia go, na systemie Windows NT, jak i innych nie spełniających tego standardu systemach. W takim przypadku, potrzebnym może okazać się wprowadzenie odpowiednich zmian w kodzie.
 
+Największe ograniczenia dotyczące architektury procesora wychodzą ze środowiska uruchomieniowego Node.js, oraz silnika konteneryzującego Docker. Node.js oficjalnie wspiera x86\_64, ARM, oraz architektury IBM-a. Istnieje również wsparcie dla architektury x86 32-bitowej, lecz na systemach UNIX-owych jest ono eksperymentalne.\cite{archNodeBuilding} Silnik Docker-a wspiera architektury x86\_64, ARM (zarówno 32-bit, jak i 64-bit), oraz architektury IBM.\cite{archApacheAgeDocker} Apache Age, natomiast, którego obraz uruchamiamy w środowisku zkonteneryzowanym, wspiera dwie architektury - x86\_64, oraz ARM 64-bit.\cite{archInstallDockerEngine}
+
+Ciężko jest oszacować dokładnie ile pamięci podręcznej (RAM) nasza maszyna będzie potrzebować. Według mojej analizy, Node wykonujący robot indeksujący, na początku zabiera 130 MB pamięci i stale rośnie. Przyrost ten spowodowany jest rosnącą ilością adresów przechowywanych w zbiorze "queue". Niewątpliwie, jest to element, który należałoby poprawić w późniejszych reedycjach, szczególnie biorąc pod uwagę fakt, że przy dłuższym procesie indeksowania, ilość adresów w stosie w końcu przekroczy maksimum, tym samym wyrzucając błąd, terminujący dalsze działanie programu. Dla typowego procesu zbierania pamięć nie powinna przekroczyć jednak 1 GB. Nie należy jednak zapominać o instancjach przeglądarki. Ilość przetwarzanych stron na raz zależna jest od ilości wątków procesora (1 do 1). Każda instancja przeglądarki z załadowaną stroną zajmuje około 120-230 MB. Demon Docker-a zajmuje około 100 MB pamięci, a uruchomiona i odpytywana instancja Postgres-a (z obrazu "apache/age") ok. 200-300 MB.
+
+Połączenie internetowe musi być odpowiednie do ładowania jednocześnie, jak i w rozsądnym czasie, wielu. współcześnie występujących, stron internetowych (czas ładowania nie może przekroczyć 30 sekund).
+
+Biorąc powyższe aspekty pod uwagę, stwierdzam iż minimalne wymagania, dla rozsądnego działania to:
+
+\begin{itemize}
+\item Procesor: x86\_64, bądź ARM64; 2 rdzenie, 4 wątki
+\item Pamięć: 6 GB RAM (DDR4, bądź DDR5)
+\item Dysk: 64 GB przestrzeni (system + oprogramowanie)
+\item Połączenie sieciowe: 100 Mbit, 20 ms (do najbliższego serwera)
+\item System operacyjny: GNU/Linux (np. Fedora, Ubuntu); ewentualnie jakikolwiek współczesny system UNIX-owy (np. macOS)
+\end{itemize}
+
+\subsection{Uruchamianie komponentów}
+W tej sekcji, skupię się na konfiguracji w środowisku Red Hat Enterprise Linux i pochodnych. Można przenieść to, na inne środowiska, przy wprowadzeniu odpowiednich poprawek.
+
+\subsubsection{Instalacja Docker-a i uruchomienie Postgres-a}
+Baza danych, jest najważniejszym elementem tego projektu. Bez niej nie można, ani uruchomić procesu indeksowania, który tą bazę zapełni, ani uruchomić interfejsu, który zwizualizuje dane, znajdujące się wewnątrz. Do uruchomienia bazy danych potrzebujemy silnika Docker.
+Aby zainstalować go, musimy wykonać następujące kroki:
+\begin{itemize}
+ \item Odinstalować stare wersje komponentów Docker-owych, jeżeli obecne:
+ \begin{lstlisting}
+$ sudo dnf remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-selinux \
+                  docker-engine-selinux \
+                  docker-engine
+ \end{lstlisting}
+ \item Dodać repozytorium Docker-a do managera paczek
+ \begin{lstlisting}
+$ sudo dnf -y install dnf-plugins-core
+$ sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+ \end{lstlisting}
+ \item Zainstalować pakiety silnika Docker-owego i innych powiązanych komponentów
+ \begin{lstlisting}
+$ sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+ \end{lstlisting}
+ \item Włączyć demona (ang. daemon) Docker-owego w naszym init-systemie
+ \begin{lstlisting}
+$ sudo systemctl enable --now docker
+ \end{lstlisting}
+\end{itemize}\cite{fedDockerEngine}
+
+Po zainstalowaniu Docker Engine, uruchamiamy nasz kontener Postgres-a z rozszerzeniem Apache Age, wykorzystując poniższą komendę:
+
+\begin{lstlisting}
+$ docker run --name postgres \
+             -p 5455:5432 \
+             -e POSTGRES_USER=interwebs \
+             -e POSTGRES_PASSWORD=postgres \
+             -e POSTGRES_DB=postgresDB \
+             -d apache/age
+\end{lstlisting}
+
+Komenda "\lstinline{docker run}" uruchamia obraz kontenera, w naszym przypadku jest nim "\lstinline{apache/age}". Jeżeli obraz ten nie jest dostępny lokalnie, pobierany jest on z repozytorium Docker Hub (\url{https://hub.docker.com}).
+
+Znaczenie poszczególnych flag to:
+\begin{itemize}
+ \item "\lstinline{--name}" - ustawia nazwę kontenera, której będziemy mogli później użyć, gdy będziemy chcieli się do tego kontenera odwołać w innej komendzie
+ \item "\lstinline{-p}" - wystawia port z kontenera, do maszyny gospodarza; w kolejności <gospodarz>:<kontener>
+ \item "\lstinline{-e}" - ustawia zmienną środowiskową w kontenerze
+ \item "\lstinline{-d}" - uruchamia kontener w trybie "detached" (oderwanym); kontener uruchamiany jest w tle; jedyna rzecz zwracana do "stdout" (standardowy strumień wyjścia), to ID (identyfikator) kontenera
+\end{itemize}\cite{dockerRun}
+
+Zmienne środowiskowe, użyte są, w celu ustawienia nazwy użytkownika, hasła, oraz nazwy bazy danych. W naszym przypadku hasło jakiego użyjemy, nie ma większego znaczenia, gdyż nie wystawiamy naszej bazy do internetu, a oprogramowanie z niej korzystające, w naszym przypadku, działa w pełni lokalnie.
+
+Do naszej komendy, możemy dodać dwie dodatkowe opcje:
+\begin{itemize}
+ \item "\lstinline{-v}" - montuje ścieżkę gospodarza, bądź wolumin Docker-owy, w ścieżce wewnątrz kontenera; <ścieżka gospodarza, bądź nazwa woluminu>:<ścieżka w kontenerze>
+ \item "\lstinline{--rm}" - automatycznie usuwa kontener, gdy ten zakończy działanie
+\end{itemize}\cite{dockerRun}
+
+W ten sposób, gdy zastopujemy kontener, ten zostanie automatycznie usunięty, lecz dane nadal będą zachowane.
+Pełna komenda wygląda w ten sposób:
+\begin{lstlisting}
+$ docker run --rm --name postgres \
+                  -v pgdata:/var/lib/postgresql/data \
+                  -p 5455:5432 \
+                  -e POSTGRES_USER=interwebs \
+                  -e POSTGRES_PASSWORD=postgres \
+                  -e POSTGRES_DB=postgresDB \
+                  -d apache/age
+\end{lstlisting}
+
+\subsubsection{Instalacja Node.js-a i uruchomienie crawler-a}
+
+Zarówno crawler, jak i aplikacja webowa, wykorzystują technologię Node.js do swojego działania.
+Aby zainstalować Node.js musimy wykonać następujące kroki:
+\begin{itemize}
+ \item Instalujemy narzędzie Node Version Manager (NVM), które służy do zarządzania wersjami Node-a
+ \begin{lstlisting}
+$ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+ \end{lstlisting}
+ \item Przy użyciu narzędzia NVM instalujemy ostatnią wersję Node-a ze wsparciem długoterminowym
+ \begin{lstlisting}
+$ nvm install 20
+ \end{lstlisting}
+\end{itemize}\cite{downloadNodeJs}
+
+Kolejną rzeczą którą należy wykonać, jest zainstalowanie menadżera paczek Node-owych "PNPM":
+\begin{lstlisting}
+$ curl -fsSL https://get.pnpm.io/install.sh | sh -
+\end{lstlisting}
+
+Zakładam, że kod tego projektu, znajduje się w ścieżce "\lstinline{~/interwebs}"
+
+Aby uruchomić naszego robota:
+\begin{itemize}
+ \item Wchodzimy do ścieżki "crawler" we wcześniej skolonowanym repozytorium
+ \begin{lstlisting}
+$ cd ~/interwebs
+$ cd crawler
+ \end{lstlisting}
+ \item Instalujemy zależności naszego programu
+ \begin{lstlisting}
+$ pnpm install
+ \end{lstlisting}
+ \item Instalujemy silniki przeglądarkowe, dla biblioteki "Playwright"
+ \begin{lstlisting}
+$ pnpx playwright install
+ \end{lstlisting}
+ \item Uruchamiamy proces indeksowania stron
+ \begin{lstlisting}
+$ pnpm run start
+ \end{lstlisting}
+\end{itemize}
+
+Robot nasz, aktywnie wykorzystuje pętle zdarzeń (ang. event loop), charakterystyczną dla języka JavaScript; gdzie ilość procesowanych na raz witryn zależy od ilości wątków gospodarza.
+
+Program ten, wykonuje pętle w której uruchamiane jest \(n\) przeglądarek (a konkretniej, \(n\) kontekstów przeglądarki), gdzie \(n\) odpowiada ilości wątków. W każdej przeglądarce ładowana jest strona, która później dodawana jest do bazy danych. Gdy wszystkie przeglądarki załadują strony, następuje kolejna iteracja z kolejnymi stronami do przejrzenia.
+
+W informacjach zwracanych przez program do "stdout" (standardowy strumień wyjścia), znajdziemy:
+\begin{itemize}
+ \item Numer iteracji
+ \item Numer przeglądarki
+ \item Adres URL witryny; bądź adres startowy i adres końcowy w przypadku przekierowania
+ \item Tytuł witryny
+\end{itemize}
+
+Przykładowy strumień wyjścia z uruchomionego robota indeksującego:
+
+\lstinputlisting{crawlerOutput.txt}
+
+\subsubsection{Uruchomienie aplikacji webowej po stronie serwera}
+
+W poprzedniej podpodsekcji, zainstalowaliśmy środowisko uruchomieniowe Node.js, jak i menadżer paczek PNPM. Narzędzia te, będą niezbędne do wykonania następnych kroków.
+
+Zakładam, że kod tego projektu, znajduje się w ścieżce "\lstinline{~/interwebs}"
+
+Aby uruchomić nasz serwer webowy:
+\begin{itemize}
+ \item Wchodzimy do ścieżki "interface" w repozytorium
+ \begin{lstlisting}
+$ cd ~/interwebs
+$ cd interface
+ \end{lstlisting}
+ \item Instalujemy zależności naszego serwera
+ \begin{lstlisting}
+$ pnpm install
+ \end{lstlisting}
+ \item Uruchamiamy serwer webowy w trybie developera, bądź kompilujemy go i wtedy uruchamiamy
+ \begin{lstlisting}
+$ pnpm run dev
+$ # albo
+$ pnpm run build
+$ pnpm run start
+ \end{lstlisting}
+\end{itemize}
+
+Teraz wystarczy przejść na adres \url{http://localhost:3000}, aby zobaczyć domyślną wizualizację.
+Pozostałe wizualizacje dostępne są pod tymi adresami: \url{http://localhost:3000/noNodes}, \url{http://localhost:3000/noNodesColourEdges}, \url{http://localhost:3000/noNodesColourEdgesDomainBased}.
+
+\subsection{Gotowa wizualizacja}
+
+Stworzone zostało kilka wizualizacji, z różnymi cechami wyróżniającymi je.
+
+Pierwsza wizualizacja, wykorzystuje domyślne wartości i dostarcza zebrane przez nas dane do komponentu biblioteki "react-force-graph-2d". Wizualizacja ta charakteryzuje się, wyróżnionymi niebieską obwódką, węzłami, za które można złapać, aby interaktywnie doświadczyć sił oddziałujących na węzły, w naszej symulacji. Krawędzie mają kolor czarny. Wizualizację znajdziemy pod adresem startowym naszej aplikacji - \url{http://localhost:3000/}. Zobacz zrzut ekranu \ref{fig:default}.
 \begin{figure}[H]
 	\centering
 	\includegraphics[totalheight=8cm]{interface.png}
-	\caption{Gotowa wizualizacja struktury internetu.}
+	\caption{Wizualizacja struktury internetu, wykorzystująca domyślną konfigurację biblioteki "react-force-graph-2d".}
+	\label{fig:default}
 \end{figure}
+
+W celu lepszego zobrazowania struktury naszego grafu, wyłączona została widoczność węzłów. W ten sposób możemy doświadczyć fundamentalnej struktury naszych danych, bez zbędnych rozpraszaczy. Wizualizacja ta znajduje się pod adresem \url{http://localhost:3000/noNodes}. Zobacz zrzut ekranu \ref{fig:nn}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[totalheight=8cm]{interfaceNoNodes.png}
+	\caption{Wizualizacja struktury internetu, z wyłączoną widocznością węzłów.}
+	\label{fig:nn}
+\end{figure}
+
+Do wizualizacji nazwanej "noNodesColourEdges", dostępnej pod adresem \url{http://localhost:3000/noNodesColourEdges}, wykorzystana została biblioteka "color-hash", która dla danego ciągu znaków pozwala wygenerować kolor, o zdefiniowanych wcześniej parametrach. Jeżeli ciąg znaków, oraz parametry nie zostaną zmienione, wygenerowany kolor, za każdym razem będzie ten sam. Stąd też bierze się człon "hash".
+Ciąg znaków, który podajemy w tej wizualizacji, to adres URL, startowego węzła danej krawędzi. Zobacz zrzut ekranu \ref{fig:nnce}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[totalheight=8cm]{interfaceNNColourEdges.png}
+	\caption{Wizualizacja struktury internetu, z wyłączoną widocznością węzłów i z kolorowymi krawędziami. Kolor krawędzi przydzielany jest na podstawie całego adresu URL.}
+	\label{fig:nnce}
+\end{figure}
+
+Do wizualizacji nazwanej "noNodesColourEdgesDomainBased", wykorzystane zostały dwie biblioteki - "string-hash", oraz "culori". Biblioteka "string-hash", wykorzystywana jest, do uzyskania unikalnej, jak i deterministycznej, wartości numerycznej, dla danego ciągu znaków.
+
+Zaczynając od domeny najwyższego poziomu, przechodząc przez kolejne poddomeny, dla każdej z nich wyliczana jest krótka wartość (ang. "hash", bądź "hash value"), która w naszym przypadku reprezentowana jest przy użyciu wartości "number", będącej podstawowym typem danych w języku JavaScript, gdzie typ ten, automatycznie jest pakowany w obiekt, nazwany "Number".\cite{primitiveMdn}\cite{numberObjectMdn}
+
+Zamysł tejże wizualizacji był, aby "TLD" (domena najwyższego poziomu), miała największy wizualny wpływ na kolor, a każda kolejna subdomena, miała wpływ coraz mniejszy. Osiągnięte zostało to w następujący sposób. Używamy reprezentacji kolorów HSL (czyli kolejno Hue, czyli barwa; Saturation, czyli nasycenie; Lightness, czyli jasność). Wartość nasycenia i jasności, to kolejno 1 i 0.5, gdzie nasycenie jest możliwie najwyższe, a jasność jest w połowie, aby kolor nie był, ani jasny, ani ciemny. Dzięki temu kolor który otrzymujemy, jest możliwie jak najbardziej żywy.
+
+Wartością przez nas manipulowaną jest "Hue", czyli nasycenie. Wartość ta, oscyluje w przedziale \([0, 360)\). Zaczynamy operując na pełnej wartości, dzieląc ją na 16 segmentów (od 0, do 15). Następna subdomena, dzieli wyznaczony przez poprzednią segment, na kolejne 16 segmentów. Proces ten jest kontynuowany, aż dojdziemy do ostatniej subdomeny. Poniżej umieszczony został kod, jak i wizualna reprezentacja jego działania (zobacz rysunek \ref{fig:huepicking}).
+
+\lstinputlisting[style=ES6, firstline=48, lastline=51]{../interface/src/server/api/routers/graph.ts}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[totalheight=8cm]{huePicking.jpg}
+	\caption{Wizualna reprezentacja tego, jak działa algorytm dobierania koloru, na podstawie domen zawartych w adresie, z uwzględnieniem ich pozycji w hierarchi.}
+	\label{fig:huepicking}
+\end{figure}
+
+Wspomnę również, iż nie została użyta prosta paleta HSL, tylko jej odmiana bazująca na "Oklab", czyli "okhsl". Oklab jest reprezentacją przestrzeni kolorów, która uwzględnia to, jak kolory są odbierane przez ludzi.\cite{oklabOttosson} Dzięki użyciu "okhsl", przejścia między kolorami są odbierane, jako bardziej płynne. Nie wpływa to jednak w znacznym stopniu, na końcowy efekt.
+
+W ten sposób otrzymujemy poniższą wizualizację (zobacz zrzut ekranu \ref{fig:nncedb}). Wizualizację tą, otrzymasz również po wejściu na adres \url{http://localhost:3000/noNodesColourEdgesDomainBased}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[totalheight=8cm]{interfaceNNCEDomainBased.png}
+	\caption{Wizualizacja struktury internetu, z wyłączoną widocznością węzłów i z kolorowymi krawędziami. Kolor krawędzi przydzielany jest na podstawie nazwy hosta. Domena najwyższego poziomu ma największy wpływ na kolor, każda kolejna subdomena wpływa na kolor, ale w coraz mniejszym stopniu.}
+	\label{fig:nncedb}
+\end{figure}
+
+Jak można było zaobserwować na wizualizacji "noNodesColourEdges" i w szczególności na ostatniej wizualizacji "noNodesColourEdgesDomainBased", nasze dane nie są wystarczająco zróżnicowane. Wynika to w głównej mierze, z faktu, że adres protokołu internetowego, z którego proces indeksowania był wykonywany, zostawał zarówno blokowany przez algorytmy zabezpieczający strony przed automatycznym ruchem, jak i połączenie internetowe, nie pozwalało na ładowanie witryn w czasie mniejszym niż 30 sekund.
+
+\subsection{Przyszłość projektu, oraz potencjalne usprawnienia}
+Istnieje wiele pól, które możnaby zmienić, poprawić, zbudować na nowo.
+
+W crawler-rze, możnaby wyłączyć ładowanie poszczególnych zasobów (np. obrazów), tak aby zaoszczędzić przepustowość internetu, a jednocześnie skutecznie poprawić wydajność ładowania kolejnych to stron. Na poprawę zasługuje również kod, odpowiedzialny za przechowywanie załadowanych, jak i do załadowania linków. Internet jest olbrzymią przestrzenią, gdzie przechowywanie wszystkich linków spowoduje zapełnianie pamięci do pełna, co zakończy się wyrzuceniem błędu. Jedną z poprawek, która uprzątnełaby nieco dane, byłoby wyrzucenie z adresów parametrów "query" (z ang. "zapytanie"), które w dużej mierze służą celom marketingowym (identyfikacja użytkownika).
+
+Nie widzę obecnie, żadnych problemów w użytej przez nas bazie danych. Możnaby jednak rozpatrzyć wykorzystanie TerminusDB, jako alternatywnego rozwiązania. Zaletami TerminusDB, nad Apache Age, jest niewątpliwie funkcjonalny wbudowany interfejs użytkownika, oraz historia edycji, pozwalająca w prosty sposób, przywrócić poprzedni stan bazy danych.
+
+Interfejs użytkownika ma kilka problemów. Najważniejszym z nich jest powolność tego rozwiązania. Ze względu na wykorzystanie technologii webowych, oraz interaktywnej wizualizacji grafu, przy większej ilości danych wizualizacja generuje się bardzo wolno, nawet na mocniejszym sprzęcie. Przy odpowiednio dużej ilości elementów komponent odmawia współpracy i wyrzuca błąd (problem zgłoszony do twórcy biblioteki, zobacz \url{https://github.com/vasturiano/react-force-graph/issues/512}). Problem wolnego działania, wynika również z długiego czasu odpowiedzi ze strony serwera. Twórcy Next.js, w swojej dokumentacji informują, iż odpowiedzi nie powinny przekraczać 4MB, jednak dla dużego grafu jest to nieuniknione.\cite{nextDoc4MB} Całkiem możliwe, że do uzyskania możliwie najlepszego efektu, należałoby zrezygnować z rozwiązań webowych całkowicie; bądź użyć WebAssembly i logikę napisać w wydajniejszym języku, a efekt umieścić w elemencie "canvas".
+
+Zarówno robot indeksujący, jak i interfejs zawierają powtarzający się kod, oraz złożone funkcje. Kod można byłoby uporządkować, tak aby przestrzegał on zasad, chociażby tych ustalonych w książce Clean Code (z ang. Czysty Kod), autorstwa Robert-a C. Martin-a.
+
+\section{Podsumowanie}
+Hui wi.
 
 \printbibliography
 \listoffigures
