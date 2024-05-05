@@ -42,12 +42,12 @@ export const graphRouter = createTRPCRouter({
     const edges = rawEdges.map((edge) => {
       const startUrl = new URL(nodes.find((node) => node.id === edge.start_id)!.url)
       const hostname = startUrl.hostname
-      const domainTree = hostname.split('.').reverse()
-      const domainTreeHash = domainTree.map((domain) => stringHash(domain))
+      const domainArray = hostname.split('.').reverse()
+      const domainArrayHash = domainArray.map((domain) => stringHash(domain))
 
       let hue = 0;
-      for (let i = 0; i < domainTreeHash.length; i++) {
-        hue += 360 / Math.pow(15, i + 1) * (domainTreeHash[i]! % 15)
+      for (let i = 0; i < domainArrayHash.length; i++) {
+        hue += 360 / Math.pow(16, i + 1) * (domainArrayHash[i]! % 16)
       }
 
       return {
